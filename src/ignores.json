@@ -1,0 +1,18 @@
+{
+  "test": [
+    "this",
+    "file",
+    "is",
+    "a",
+    "test",
+    "stub"
+  ],
+  "the": [
+    "real",
+    "file",
+    "is",
+    "generated",
+    "in",
+    "lib/"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "provision-gitignore",
+  "version": "0.0.0-development",
+  "description": "An ini parser higher order function for packagesmith file provisioners",
+  "homepage": "http://keithamus.github.io/provision-gitignore",
+  "bugs": "http://github.com/keithamus/provision-gitignore/issues",
+  "license": "MIT",
+  "author": "Keith Cirkel (http://keithcirkel.co.uk)",
+  "files": [
+    "lib/"
+  ],
+  "main": "lib/index.js",
+  "bin": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/packagesmith/provision-gitignore.git"
+  },
+  "scripts": {
+    "lint": "eslint scripts src test --ignore-path .gitignore",
+    "build": "babel-node scripts/gitignore-to-json.js",
+    "prepublish": "npm run build && babel src -d lib",
+    "pretest": "npm run lint",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "test": "mocha --recursive test/ --compilers js:babel/register",
+    "watch": "npm run prepublish -- -w"
+  },
+  "config": {
+    "ghooks": {
+      "commit-msg": "validate-commit-msg",
+      "pre-commit": "npm t"
+    }
+  },
+  "babel": {
+    "optional": "runtime",
+    "compact": false,
+    "ignore": "node_modules",
+    "loose": "all",
+    "retainLines": true,
+    "stage": 2
+  },
+  "eslintConfig": {
+    "extends": "strict",
+    "parser": "babel-eslint"
+  },
+  "dependencies": {
+    "babel-runtime": "^5.8.34",
+    "packagesmith": "^1.1.0",
+    "packagesmith.formats.multiline": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel": "^5.8.34",
+    "babel-eslint": "^4.1.6",
+    "chai": "^3.3.0",
+    "chai-spies": "^0.7.1",
+    "eslint": "^1.10.3",
+    "eslint-config-strict": "^7.0.4",
+    "eslint-plugin-filenames": "^0.2.0",
+    "fs-promise": "^0.3.1",
+    "ghooks": "^1.0.1",
+    "mkdirp-promise": "^1.0.3",
+    "mocha": "^2.3.4",
+    "node-fetch": "^1.3.3",
+    "semantic-release": "^4.3.5",
+    "travis-after-all": "^1.4.4",
+    "validate-commit-msg": "^1.0.0"
+  }
+}
