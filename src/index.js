@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import multiline from 'packagesmith.formats.multiline';
 import { runProvisionerSet } from 'packagesmith';
 import ignores from './ignores.json';
