@@ -19,6 +19,7 @@ export function provisionGitignore({ gitIgnoreTemplates = null, additionalLines 
     '.gitignore': {
       questions: gitIgnoreTemplates && gitIgnoreTemplates.length ? [] : [ templatesQuestion ],
       contents: multiline((gitIgnore, answers) => [
+        ...gitIgnore,
         ...(gitIgnoreTemplates || (answers.gitIgnoreTemplates || []).sort())
           .reduce((total, name) => total.concat(ignores[name]), []),
         ...additionalLines,

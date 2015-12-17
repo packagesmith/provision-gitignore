@@ -53,28 +53,33 @@ describe('provisionGitignore', () => {
         gitignoreContents = gitignore.contents;
       });
 
+      it('adds given lines based on gitIgnoreTemplates answer', () => {
+        gitignoreContents('', { gitIgnoreTemplates: [ 'test' ] })
+          .should.equal('this\nfile\nis\na\ntest\nstub\n');
+      });
+
       it('preserves original file contents', () => {
         gitignoreContents('someline', { gitIgnoreTemplates: [ 'test' ] })
-          .should.equal('this\nfile\nis\na\ntest\nstub\n');
+          .should.equal('someline\nthis\nfile\nis\na\ntest\nstub\n');
       });
 
       it('appends any line from given additionalLines option', () => {
         provisionGitignore({
           additionalLines: [ 'foo', 'bar' ],
         })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test' ] })
-          .should.equal('this\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
+          .should.equal('someline\nthis\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
       });
 
       it('can append multiple templates together', () => {
         provisionGitignore({
           additionalLines: [ 'foo', 'bar' ],
         })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test', 'the' ] })
-          .should.equal('this\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
+          .should.equal('someline\nthis\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
         provisionGitignore({
           gitIgnoreTemplates: [ 'test', 'the' ],
           additionalLines: [ 'foo', 'bar' ],
         })['.gitignore'].contents('someline')
-          .should.equal('this\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
+          .should.equal('someline\nthis\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
       });
 
       it('uses gitIgnoreTemplates option over answer', () => {
@@ -82,7 +87,7 @@ describe('provisionGitignore', () => {
           gitIgnoreTemplates: [ 'test' ],
           additionalLines: [ 'foo', 'bar' ],
         })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test', 'the' ] })
-          .should.equal('this\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
+          .should.equal('someline\nthis\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
       });
 
     });
