@@ -1,21 +1,21 @@
 import chai from 'chai';
 import chaiSpies from 'chai-spies';
 chai.use(chaiSpies).should();
-import provisionGitIgnore from '../src/';
-describe('provisionGitIgnore', () => {
+import provisionGitignore from '../src/';
+describe('provisionGitignore', () => {
 
   it('is a function', () => {
-    provisionGitIgnore.should.be.a('function');
+    provisionGitignore.should.be.a('function');
   });
 
   it('returns an object with .gitignore property', () => {
-    provisionGitIgnore().should.be.an('object').that.has.keys([ '.gitignore' ]);
+    provisionGitignore().should.be.an('object').that.has.keys([ '.gitignore' ]);
   });
 
-  describe('.gitignore gitignore', () => {
+  describe('.gitignore', () => {
     let gitignore = null;
     beforeEach(() => {
-      gitignore = provisionGitIgnore()['.gitignore'];
+      gitignore = provisionGitignore()['.gitignore'];
     });
 
     it('has right keys', () => {
@@ -37,6 +37,52 @@ describe('provisionGitIgnore', () => {
           { name: 'test', value: 'test' },
           { name: 'the', value: 'the' },
         ]);
+      });
+
+      it('is not present when gitIgnoreTemplates option is supplied', () => {
+        provisionGitignore({
+          gitIgnoreTemplates: [ 'node' ],
+        })['.gitignore'].should.have.property('questions').that.has.lengthOf(0);
+      });
+
+    });
+
+    describe('contents function', () => {
+      let gitignoreContents = null;
+      beforeEach(() => {
+        gitignoreContents = gitignore.contents;
+      });
+
+      it('preserves original file contents', () => {
+        gitignoreContents('someline', { gitIgnoreTemplates: [ 'test' ] })
+          .should.equal('this\nfile\nis\na\ntest\nstub\n');
+      });
+
+      it('appends any line from given additionalLines option', () => {
+        provisionGitignore({
+          additionalLines: [ 'foo', 'bar' ],
+        })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test' ] })
+          .should.equal('this\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
+      });
+
+      it('can append multiple templates together', () => {
+        provisionGitignore({
+          additionalLines: [ 'foo', 'bar' ],
+        })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test', 'the' ] })
+          .should.equal('this\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
+        provisionGitignore({
+          gitIgnoreTemplates: [ 'test', 'the' ],
+          additionalLines: [ 'foo', 'bar' ],
+        })['.gitignore'].contents('someline')
+          .should.equal('this\nfile\nis\na\ntest\nstub\nreal\ngenerated\nin\nlib/\nfoo\nbar\n');
+      });
+
+      it('uses gitIgnoreTemplates option over answer', () => {
+        provisionGitignore({
+          gitIgnoreTemplates: [ 'test' ],
+          additionalLines: [ 'foo', 'bar' ],
+        })['.gitignore'].contents('someline', { gitIgnoreTemplates: [ 'test', 'the' ] })
+          .should.equal('this\nfile\nis\na\ntest\nstub\nfoo\nbar\n');
       });
 
     });
