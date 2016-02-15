@@ -1,7 +1,7 @@
 #!/usr/bin/env node
+import ignores from './ignores.json';
 import multiline from 'packagesmith.formats.multiline';
 import { runProvisionerSet } from 'packagesmith';
-import ignores from './ignores.json';
 export function provisionGitignore({ gitIgnoreTemplates = null, additionalLines = [], gitIgnoreOptions } = {}) {
   const templatesQuestion = {
     type: 'checkbox',
@@ -30,5 +30,6 @@ export function provisionGitignore({ gitIgnoreTemplates = null, additionalLines 
 export default provisionGitignore;
 
 if (require.main === module) {
-  runProvisionerSet(process.argv[2] || '.', provisionGitignore());
+  const directoryArgPosition = 2;
+  runProvisionerSet(process.argv[directoryArgPosition] || '.', provisionGitignore());
 }

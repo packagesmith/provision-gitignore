@@ -1,9 +1,10 @@
 /* eslint-disable no-console, no-process-exit, id-match, camelcase */
+import ensureDirectory from 'mkdirp-promise';
 import fetch from 'node-fetch';
 import { resolve as resolvePath } from 'path';
 import { writeFile } from 'fs-promise';
-import ensureDirectory from 'mkdirp-promise';
 const goodStatusCap = 399;
+const jsonIndent = 2;
 const libFolder = resolvePath(__dirname, '..', 'lib');
 const ignoresJsonFile = resolvePath(libFolder, 'ignores.json');
 export async function gitignoreToJson() {
@@ -17,7 +18,7 @@ export async function gitignoreToJson() {
   };
   if (process.env.GH_TOKEN) {
     console.log('Using GH_TOKEN as Authorization');
-    options.headers.Authorization = `token ${process.env.GH_TOKEN}`;
+    options.headers.Authorization = `token ${ process.env.GH_TOKEN }`;
   }
   const mainIgnores = await fetch('https://api.github.com/repos/github/gitignore/contents', options);
   const globalIgnores = await fetch('https://api.github.com/repos/github/gitignore/contents/Global', options);
@@ -30,7 +31,7 @@ export async function gitignoreToJson() {
       .concat(await globalIgnores.json())
       .filter(({ name, download_url }) => download_url && /.gitignore$/.test(name))
       .map(async function fetchIgnoreFile({ name, download_url }) {
-        console.log(`Fetching ${download_url}`);
+        console.log(`Fetching ${ download_url }`);
         return {
           name: name.replace(/.gitignore$/, '').toLowerCase(),
           contents: (await (await fetch(download_url)).text()).split('\n')
@@ -46,13 +47,14 @@ export async function gitignoreToJson() {
       return json;
     }, {});
   console.log('Writing json file');
-  await writeFile(ignoresJsonFile, JSON.stringify(ignoresJson, null, 2), 'utf8');
-  console.log(`${ignoresJsonFile} written`);
+  await writeFile(ignoresJsonFile, JSON.stringify(ignoresJson, null, jsonIndent), 'utf8');
+  console.log(`${ ignoresJsonFile } written`);
 }
 
 if (require.main === module) {
-  gitignoreToJson().catch((error) => {
-    console.error(error.stack || error);
-    process.exit(1);
+  gitignoreToJson().catch((gitignoreToJsonError) => {
+    console.error(gitignoreToJsonError.stack || gitignoreToJsonError);
+    const badExitCode = 1;
+    process.exit(badExitCode);
   });
 }
